@@ -48,13 +48,13 @@ private:
       }
       return pos_index_node[l];
     }
-    std::pair<int, int> higher_bound_pair(const Pair& origin) const { // find the one >= origin
+    std::pair<int, int> higher_bound_pair(const Pair& origin) const { // find the one > origin
       if(cnt == 1) return {pos_index_node[0], 0};
-      if(val[cnt - 2] < origin) return {pos_index_node[cnt - 1], cnt - 1};
+      if(val[cnt - 2] <= origin) return {pos_index_node[cnt - 1], cnt - 1};
       int l = 0, r = cnt - 2;
       while(l < r) {
         int m = (l + r) >> 1;
-        if(val[m] < origin) l = m + 1;
+        if(val[m] <= origin) l = m + 1;
         else r = m;
       }
       return {pos_index_node[l], l};
@@ -109,13 +109,10 @@ private:
       }
       return l;
     }
-    //int lower_bound(const Pair& origin) {
-      /////////////////
-    //}
     bool insert(const Pair& origin) {
       //siz < L
       int hi_bound = higher_bound(origin);
-      if(origin == val[hi_bound]) return false;
+      if(hi_bound != siz && origin == val[hi_bound]) return false;
       for(int i = siz; i > hi_bound; --i) {
         val[i] = val[i-1];
       }
@@ -129,7 +126,7 @@ private:
     //}
   };
 
-  File<index_node, 4> f_index; // 3 for siz, 4 for root
+  File<index_node, 4> f_index; // 3 for total, 4 for root
   File<val_node, 4> f_val;
 
 public:
