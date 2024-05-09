@@ -12,7 +12,7 @@ int main() {
   //freopen("2.out", "w", stdout);
   int n;
   std::cin >> n;
-  sjtu::BPTree<sjtu::Str<65>, int, 1000, 1000> bpt("index", "val");
+  sjtu::BPTree<sjtu::Str<65>, int, 10, 10> bpt("index", "val");
   for(int i = 0; i < n; ++i) {
     std::string cmd;
     std::cin >> cmd;
