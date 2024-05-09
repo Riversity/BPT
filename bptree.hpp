@@ -18,8 +18,8 @@ private:
   using Pair = std::pair<Key, T>;
 
   struct index_node {
-    Pair val[M - 1];
-    int pos_index_node[M];
+    Pair val[M];
+    int pos_index_node[M + 1]; // one more
     int cnt;
     bool isLeaf;
     index_node() {
@@ -73,10 +73,10 @@ private:
     void insert_index(const Pair& dat, int pos, int k) {
       // pos_index_node[k] is splitted
       for(int i = k + 1; i < cnt; ++i) {
-        v[i] = v[i - 1];
+        val[i] = val[i - 1];
         pos_index_node[i + 1] = pos_index_node[i];
       }
-      v[k] = dat;
+      val[k] = dat;
       pos_index_node[k + 1] = pos;
       ++cnt;
     }
@@ -172,8 +172,10 @@ public:
     val_node block;
     f_val.read(block, pos);
     int k = block.higher_bound_by_key(key);
+
     if(k == -1) {
       pos = block.nxt_pos;
+      if(pos == -1) return ret;
       f_val.read(block, pos);
       k = 0;
     }
@@ -181,6 +183,7 @@ public:
       ret.push_back(block.val[k].second);
       if(k == block.siz - 1) { // end of the block
         pos = block.nxt_pos;
+        if(pos == -1) return ret;
         f_val.read(block, pos);
         k = 0;
       }
@@ -213,8 +216,8 @@ public:
     }
     else {
       if(cur.insert(dat)) {
-        f_val.update(cur, pos);
         ++total;
+        f_val.update(cur, pos);
       }
       return {false, 0};
     }
@@ -238,14 +241,35 @@ public:
     if(res.first) {
       // splitted, node + 1
       if(cur.cnt == M) {
-        ////////////
-        if(index_pos == root) { //////// root = 
-          /////////////
+        // M-M/2 to original, M/2+1 to new
+        cur.insert_index(new_ret, res.second, pos.second);
+        index_node new_cur;
+        int new_cur_pos;
+        for(int i = 0; i < M/2; ++i) {
+          new_cur.pos_index_node[i] = cur.pos_index_node[M-M/2 + i];
+          new_cur.val[i] = cur.val[M-M/2 + i];
         }
+        new_cur.pos_index_node[M/2] = cur.pos_index_node[M];
+        ret = cur.val[M-M/2 - 1];
+        new_cur.cnt = M/2 + 1;
+        cur.cnt = M-M/2;
+        new_cur.isLeaf = cur.isLeaf;
+        f_index.update(cur, index_pos);
+        new_cur_pos = f_index.write(new_cur);
+        if(index_pos == root) {
+          index_node new_root;
+          new_root.isLeaf = false;
+          new_root.cnt = 2;
+          new_root.val[0] = ret;
+          new_root.pos_index_node[0] = index_pos;
+          new_root.pos_index_node[1] = new_cur_pos;
+          root = f_index.write(new_root);
+        }
+        return {true, new_cur_pos};
       }
       else {
-        ++cur.cnt;
         cur.insert_index(new_ret, res.second, pos.second);
+        f_index.update(cur, index_pos);
         return {false, 0};
       }
     }
