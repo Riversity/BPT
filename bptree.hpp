@@ -72,7 +72,7 @@ private:
     }
     void insert_index(const Pair& dat, int pos, int k) {
       // pos_index_node[k] is splitted
-      for(int i = k + 1; i < cnt; ++i) {
+      for(int i = cnt - 1; i > k; --i) {
         val[i] = val[i - 1];
         pos_index_node[i + 1] = pos_index_node[i];
       }
@@ -287,6 +287,40 @@ public:
       Pair ret;
       insert_at(dat, root, ret);
     }
+  }
+  void put(int pos) {
+    val_node s;
+    f_val.read(s, pos);
+    std::cerr<<"Now block at "<<pos<<std::endl;
+    std::cerr<<"Block size is "<<s.siz<<std::endl;
+    for(int i = 0; i < s.siz; ++i) {
+      std::cerr<<s.val[i].first<<s.val[i].second<<std::endl;
+    }
+    std::cerr<<"Block End!"<<std::endl;
+  }
+  void traverse(int pos) {
+    index_node r;
+    f_index.read(r, pos);
+    std::cerr<<"Now index at "<<pos<<std::endl;
+    std::cerr<<"Index size is "<<r.cnt<<std::endl;
+    if(r.isLeaf) {
+      for(int i = 0; i < r.cnt - 1; ++i) {
+        put(r.pos_index_node[i]);
+        std::cerr<<"Pivot is "<<r.val[i].first<<r.val[i].second<<std::endl;
+      }
+      put(r.pos_index_node[r.cnt - 1]);
+    }
+    else {
+      for(int i = 0; i < r.cnt - 1; ++i) {
+        traverse(r.pos_index_node[i]);
+        std::cerr<<"Pivot is "<<r.val[i].first<<r.val[i].second<<std::endl;
+      }
+      put(r.pos_index_node[r.cnt - 1]);
+    }
+    std::cerr<<"Index End!"<<std::endl;
+  }
+  void traverse() {
+    traverse(root);
   }
 };
 

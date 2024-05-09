@@ -8,11 +8,11 @@ int main() {
   //std::ios::sync_with_stdio(false);
   //std::cin.tie(nullptr);
   //std::cout.tie(nullptr);
-  //freopen("2.in", "r", stdin);
-  //freopen("2.out", "w", stdout);
+  //freopen("1.in", "r", stdin);
+  //freopen("1.out", "w", stdout);
   int n;
   std::cin >> n;
-  sjtu::BPTree<sjtu::Str<65>, int, 10, 10> bpt("index", "val");
+  sjtu::BPTree<sjtu::Str<65>, int, 100, 100> bpt("index", "val");
   for(int i = 0; i < n; ++i) {
     std::string cmd;
     std::cin >> cmd;
@@ -39,6 +39,7 @@ int main() {
       }
     }
   }
+  //bpt.traverse();
   //fclose(stdin);
   //fclose(stdout);
   return 0;
