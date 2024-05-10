@@ -13,7 +13,7 @@ int main() {
   int n;
   std::cin >> n;
   sjtu::BPTree<sjtu::Str<65>, int, 100, 100> bpt("index", "val");
-  bpt.test(500);
+  //bpt.test(500);
   for(int i = 0; i < n; ++i) {
     std::string cmd;
     std::cin >> cmd;
