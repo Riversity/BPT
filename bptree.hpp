@@ -90,7 +90,7 @@ private:
       nxt_pos = -1;
     }
     int higher_bound(const Pair& origin) const { // find the one >= origin
-      if(val[siz - 1] < origin) return siz;
+      if(siz == 0 || val[siz - 1] < origin) return siz;
       int l = 0, r = siz - 1;
       while(l < r) {
         int m = (l + r) >> 1;
@@ -100,7 +100,7 @@ private:
       return l;
     }
     int higher_bound_by_key(const Key& origin) const { // find the one >= origin
-      if(val[siz - 1].first < origin) return -1; // Here specialized
+      if(siz == 0 || val[siz - 1].first < origin) return -1; // Here specialized
       int l = 0, r = siz - 1;
       while(l < r) {
         int m = (l + r) >> 1;
@@ -114,16 +114,22 @@ private:
       int hi_bound = higher_bound(origin);
       if(hi_bound != siz && origin == val[hi_bound]) return false;
       for(int i = siz; i > hi_bound; --i) {
-        val[i] = val[i-1];
+        val[i] = val[i - 1];
       }
       val[hi_bound] = origin;
       ++siz;
       return true;
     }
-    //int erase(const Pair& origin) {
-      //int hi_bound = higher_bound(origin);
-      //////////////
-    //}
+    bool erase(const Pair& origin) {
+      if(siz == 0) return false;
+      int hi_bound = higher_bound(origin);
+      if(hi_bound == siz || origin != val[hi_bound]) return false;
+      for(int i = hi_bound + 1; i < siz; ++i) {
+        val[i - 1] = val[i];
+      }
+      --siz;
+      return true;
+    }
   };
 
   File<index_node, 4> f_index; // 3 for total, 4 for root
@@ -288,6 +294,23 @@ public:
       insert_at(dat, root, ret);
     }
   }
+  void erase_at(const Pair& dat, int pos) { // no merge
+    index_node r;
+    f_index.read(r, pos);
+    int new_pos = r.unequal_higher_bound(dat);
+    if(r.isLeaf) {
+      val_node v;
+      f_val.read(v, new_pos);
+      if(v.erase(dat)) f_val.update(v, new_pos);
+    }
+    else {
+      erase_at(dat, new_pos);
+    }
+  }
+  void erase(const Pair& dat) {
+    if(root == -1) return;
+    erase_at(dat, root);
+  }
   void put(int pos) {
     val_node s;
     f_val.read(s, pos);
@@ -317,10 +340,22 @@ public:
       }
       put(r.pos_index_node[r.cnt - 1]);
     }
-    std::cerr<<"Index End!"<<std::endl;
+    std::cerr<<"Index "<<pos<<" End!"<<std::endl;
   }
   void traverse() {
     traverse(root);
+  }
+  void test(int m) {
+    const char* kk = "aaaa";
+    Key k(kk);
+    for(int i = 0; i < m; ++i) {
+      insert({k, i});
+      erase({k, i-1});
+    }
+    auto v = find(k);
+    for(int i : v) {
+      std::cout<<i<<std::endl;
+    }
   }
 };
 

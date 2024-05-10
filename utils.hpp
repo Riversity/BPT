@@ -14,7 +14,7 @@ namespace sjtu {
       st[0] = '\0';
     }
     Str(const char* s) {
-      strcpy(s, st);
+      strcpy(st, s);
     }
     Str(const std::string &s) {
         strcpy(st, s.c_str());

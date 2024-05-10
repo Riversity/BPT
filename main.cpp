@@ -13,6 +13,7 @@ int main() {
   int n;
   std::cin >> n;
   sjtu::BPTree<sjtu::Str<65>, int, 100, 100> bpt("index", "val");
+  bpt.test(500);
   for(int i = 0; i < n; ++i) {
     std::string cmd;
     std::cin >> cmd;
@@ -24,6 +25,7 @@ int main() {
     }
     else if(cmd == "delete") {
       std::cin >> name >> val;
+      bpt.erase({name, val});
     }
     else if(cmd == "find") {
       std::cin >> name;
