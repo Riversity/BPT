@@ -8,13 +8,13 @@ namespace sjtu {
 template<class T, int info_len>
 class File {
 private:
-  int tail = (info_len + 1) * sizeof(int);
+  //int tail = (info_len + 1) * sizeof(int);
   std::fstream file;
   std::string file_name;
   int siz_T = sizeof(T);
 
 public:
-  File() = default;
+  File() = delete;
 
   File(const std::string& file_name) : file_name(file_name) {}
 
@@ -48,11 +48,12 @@ public:
     int pos;
     file.read(reinterpret_cast<char *>(&pos), sizeof(int));
     if(pos == 0) {
-      file.seekp(tail);
+      file.seekp(0, std::ios::end);
+      int ret = file.tellp();
       file.write(reinterpret_cast<char *>(&t), siz_T);
-      tail += siz_T;
+      //tail = ret + siz_T;
       file.close();
-      return tail - siz_T;
+      return ret;
     }
     else {
       file.seekg(pos);

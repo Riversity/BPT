@@ -82,7 +82,7 @@ private:
     }
   };
   struct val_node { // leaf node
-    Pair val[L];
+    Pair val[L + 1];
     int siz;
     int nxt_pos;
     val_node() {
@@ -132,12 +132,12 @@ private:
     }
   };
 
-  File<index_node, 4> f_index; // 3 for total, 4 for root
-  File<val_node, 4> f_val;
+  File<index_node, 2> f_index; // 1 for total, 2 for root
+  File<val_node, 2> f_val;
 
 public:
   explicit BPTree(const std::string &name_f_index, const std::string &name_f_val) 
-                                        : f_index(name_f_index), f_val(name_f_val){
+                                        : f_index(name_f_index), f_val(name_f_val) {
     //std::fstream file;
     //file.open(name_f_index, std::ios::in);
     if(!std::filesystem::exists(name_f_index)) {
@@ -147,14 +147,14 @@ public:
       root = -1;
     }
     else {
-      f_index.get_info(total, 3);
-      f_index.get_info(root, 4);
+      f_index.get_info(total, 1);
+      f_index.get_info(root, 2);
     }
   }
 
   ~BPTree() {
-    f_index.write_info(total, 3);
-    f_index.write_info(root, 4);
+    f_index.write_info(total, 1);
+    f_index.write_info(root, 2);
   }
 
   int find_first(int index_node_pos, const Key &key) { // Return pos of the block in f_val
@@ -284,7 +284,7 @@ public:
       v.val[0] = dat;
       v.siz = 1;
       index_node i;
-      //i.isLeaf = true;
+      i.isLeaf = true;
       i.cnt = 1;
       i.pos_index_node[0] = f_val.write(v);
       root = f_index.write(i);
@@ -301,7 +301,10 @@ public:
     if(r.isLeaf) {
       val_node v;
       f_val.read(v, new_pos);
-      if(v.erase(dat)) f_val.update(v, new_pos);
+      if(v.erase(dat)) {
+        f_val.update(v, new_pos);
+        --total;
+      }
     }
     else {
       erase_at(dat, new_pos);
@@ -338,7 +341,7 @@ public:
         traverse(r.pos_index_node[i]);
         std::cerr<<"Pivot is "<<r.val[i].first<<r.val[i].second<<std::endl;
       }
-      put(r.pos_index_node[r.cnt - 1]);
+      traverse(r.pos_index_node[r.cnt - 1]);
     }
     std::cerr<<"Index "<<pos<<" End!"<<std::endl;
   }
@@ -357,6 +360,7 @@ public:
       std::cout<<i<<std::endl;
     }
   }
+
 };
 
 }
