@@ -151,7 +151,6 @@ public:
       f_index.get_info(total, 1);
       f_index.get_info(root, 2);
     }
-    std::cout<<sizeof(index_node)<<" "<<sizeof(val_node)<<std::endl;
   }
 
   ~BPTree() {
