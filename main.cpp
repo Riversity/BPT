@@ -5,19 +5,19 @@
 #include "bptree.hpp"
 
 int main() {
-  //std::ios::sync_with_stdio(false);
-  //std::cin.tie(nullptr);
-  //std::cout.tie(nullptr);
+  std::ios::sync_with_stdio(false);
+  std::cin.tie(nullptr);
+  std::cout.tie(nullptr);
   //freopen("1.in", "r", stdin);
   //freopen("1.out", "w", stdout);
   int n;
   std::cin >> n;
-  sjtu::BPTree<sjtu::Str<65>, int, 100, 100> bpt("index", "val");
+  sjtu::BPTree<sjtu::Str<64>, int, 56, 58> bpt("index", "val");
   //bpt.test(500);
   for(int i = 0; i < n; ++i) {
     std::string cmd;
     std::cin >> cmd;
-    sjtu::Str<65> name;
+    sjtu::Str<64> name;
     int val;
     if(cmd == "insert") {
       std::cin >> name >> val;

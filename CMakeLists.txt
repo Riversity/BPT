@@ -3,7 +3,8 @@ project(bpt)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_compile_options(-Wall -Wextra -Wpedantic)
+#add_compile_options(-Wall -Wextra -Wpedantic)
+add_compile_options(-O3)
 
 add_executable(code
               main.cpp

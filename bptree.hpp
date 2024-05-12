@@ -121,6 +121,7 @@ private:
       return true;
     }
     bool erase(const Pair& origin) {
+      //
       if(siz == 0) return false;
       int hi_bound = higher_bound(origin);
       if(hi_bound == siz || origin != val[hi_bound]) return false;
@@ -150,6 +151,7 @@ public:
       f_index.get_info(total, 1);
       f_index.get_info(root, 2);
     }
+    std::cout<<sizeof(index_node)<<" "<<sizeof(val_node)<<std::endl;
   }
 
   ~BPTree() {
@@ -294,26 +296,32 @@ public:
       insert_at(dat, root, ret);
     }
   }
-  void erase_at(const Pair& dat, int pos) { // no merge
+  //std::pair<bool, int> erase_at(const Pair& dat, int index_pos, Pair& new_pivot) {
+    // first return value whether erased, second the pos of the deleted node
+  void erase_at(const Pair& dat, int index_pos) { // no merge
     index_node r;
-    f_index.read(r, pos);
-    int new_pos = r.unequal_higher_bound(dat);
+    f_index.read(r, index_pos);
+    std::pair<int, int> pos = r.higher_bound_pair(dat);
     if(r.isLeaf) {
       val_node v;
-      f_val.read(v, new_pos);
+      f_val.read(v, pos.first);
       if(v.erase(dat)) {
-        f_val.update(v, new_pos);
+        f_val.update(v, pos.first);
         --total;
+        /*if(v.siz < M/2) {
+
+        }*/
       }
     }
     else {
-      erase_at(dat, new_pos);
+      erase_at(dat, pos.first);
     }
   }
   void erase(const Pair& dat) {
     if(root == -1) return;
     erase_at(dat, root);
   }
+  /*
   void put(int pos) {
     val_node s;
     f_val.read(s, pos);
@@ -360,7 +368,7 @@ public:
       std::cout<<i<<std::endl;
     }
   }
-
+  */
 };
 
 }
