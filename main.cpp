@@ -6,8 +6,8 @@
 
 int main() {
   std::ios::sync_with_stdio(false);
-  std::cin.tie(nullptr);
-  std::cout.tie(nullptr);
+  //std::cin.tie(nullptr);
+  //std::cout.tie(nullptr);
   //freopen("1.in", "r", stdin);
   //freopen("1.out", "w", stdout);
   int n;
