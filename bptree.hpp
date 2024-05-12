@@ -185,7 +185,7 @@ public:
     }
     while(block.val[k].first == key) {
       ret.push_back(block.val[k].second);
-      if(k == block.siz - 1) { // end of the block
+      if(k >= block.siz - 1) { // end of the block
         pos = block.nxt_pos;
         if(pos == -1) return ret;
         f_val.read(block, pos);
