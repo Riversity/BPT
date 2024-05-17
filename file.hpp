@@ -24,7 +24,7 @@ public:
     int tmp = 0;
     for(int i = 0; i <= info_len; ++i)
       file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
-    file.close();
+    //file.close();
   }
 
   void get_info(int &tmp, int n = 1) {
@@ -32,7 +32,7 @@ public:
     file.open(file_name, std::ios::in);
     file.seekg(n * sizeof(int));
     file.read(reinterpret_cast<char *>(&tmp), sizeof(int));
-    file.close();
+    //file.close();
   }
 
   void write_info(int tmp, int n = 1) {
@@ -40,7 +40,7 @@ public:
     file.open(file_name, std::ios::in | std::ios::out);
     file.seekp(n * sizeof(int));
     file.write(reinterpret_cast<char *>(&tmp), sizeof(int));
-    file.close();
+    //file.close();
   }
 
   int write(T &t) {
@@ -52,7 +52,7 @@ public:
       int ret = file.tellp();
       file.write(reinterpret_cast<char *>(&t), siz_T);
       //tail = ret + siz_T;
-      file.close();
+      //file.close();
       return ret;
     }
     else {
@@ -63,7 +63,7 @@ public:
       file.write(reinterpret_cast<char *>(&next_pos), sizeof(int));
       file.seekp(pos);
       file.write(reinterpret_cast<char *>(&t), siz_T);
-      file.close();
+      //file.close();
       return pos;
     }
   }
@@ -72,14 +72,14 @@ public:
     file.open(file_name, std::ios::in | std::ios::out);
     file.seekp(index);
     file.write(reinterpret_cast<char *>(&t), siz_T);
-    file.close();
+    //file.close();
   }
 
   void read(T &t, const int index) {
     file.open(file_name, std::ios::in);
     file.seekg(index);
     file.read(reinterpret_cast<char *>(&t), siz_T);
-    file.close();
+    //file.close();
   }
 
   void Delete(int index) {
@@ -91,6 +91,10 @@ public:
     file.write(reinterpret_cast<char *>(&next_pos), sizeof(int));
     file.seekp(0);
     file.write(reinterpret_cast<char *>(&index), sizeof(int));
+    //file.close();
+  }
+
+  void close() {
     file.close();
   }
 };

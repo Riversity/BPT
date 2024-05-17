@@ -162,6 +162,8 @@ public:
   ~BPTree() {
     f_index.write_info(total, 1);
     f_index.write_info(root, 2);
+    f_index.close();
+    f_val.close();
   }
 
   int find_first(int index_node_pos, const Key &key) { // Return pos of the block in f_val
@@ -302,9 +304,8 @@ public:
     }
   }
   std::pair<bool, int> erase_at(const Pair& dat, int index_pos) {
-    // std::pair<bool, int> erase_at(const Pair& dat, int index_pos, Pair& new_pivot) {
-    // first return value whether erased, second the pos of the deleted node
-    // void erase_at(const Pair& dat, int index_pos) { // no merge
+    // first return value whether erased, second the ordinal of the deleted node
+    // void erase_at(const Pair& dat, int index_pos) {
     index_node r;
     f_index.read(r, index_pos);
     std::pair<int, int> pos_right = r.higher_bound_pair(dat);
@@ -372,6 +373,7 @@ public:
       f_index.update(i_right, root);
     }
   }
+  /*
   void put(int pos) {
     val_node s;
     f_val.read(s, pos);
@@ -418,6 +420,7 @@ public:
       std::cout<<i<<std::endl;
     }
   }
+  */
 };
 
 }
