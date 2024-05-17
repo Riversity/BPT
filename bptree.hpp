@@ -128,7 +128,6 @@ private:
       return true;
     }
     bool erase(const Pair& origin) {
-      //
       if(siz == 0) return false;
       int hi_bound = higher_bound(origin);
       if(hi_bound == siz || origin != val[hi_bound]) return false;
@@ -190,12 +189,19 @@ public:
       f_val.read(block, pos);
       k = 0;
     }
+    while(block.siz == 0) {
+      pos = block.nxt_pos;
+      if(pos == -1) return ret;
+      f_val.read(block, pos);
+    }
     while(block.val[k].first == key) {
-      if(block.siz != 0) ret.push_back(block.val[k].second);
+      ret.push_back(block.val[k].second);
       if(k >= block.siz - 1) { // end of the block
-        pos = block.nxt_pos;
-        if(pos == -1) return ret;
-        f_val.read(block, pos);
+        do {
+          pos = block.nxt_pos;
+          if(pos == -1) return ret;
+          f_val.read(block, pos);
+        } while(block.siz == 0);
         k = 0;
       }
       else {
@@ -336,10 +342,13 @@ public:
     }
     else {
       std::pair<bool, int> ret = erase_at(dat, pos_right.first);
-      if(ret.first) { // youmo
+      if(ret.first) {
         index_node i_right;
         f_index.read(i_right, pos_right.first);
         i_right.delete_by_pos(ret.second);
+        //int pos_left = -1;
+        //index_node i_left;
+
         f_index.update(i_right, pos_right.first);
       }
       return {false, -1};
@@ -349,7 +358,7 @@ public:
     if(root == -1) return;
     erase_at(dat, root);
   }
-  
+  /*
   void put(int pos) {
     val_node s;
     f_val.read(s, pos);
@@ -396,7 +405,7 @@ public:
       std::cout<<i<<std::endl;
     }
   }
-  
+  */
 };
 
 }
