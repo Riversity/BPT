@@ -162,8 +162,6 @@ public:
   ~BPTree() {
     f_index.write_info(total, 1);
     f_index.write_info(root, 2);
-    f_index.close();
-    f_val.close();
   }
 
   int find_first(int index_node_pos, const Key &key) { // Return pos of the block in f_val
@@ -325,7 +323,7 @@ public:
             }
             v_left.siz += v_right.siz;
             v_left.nxt_pos = v_right.nxt_pos;
-            f_val.Delete(pos_right.first);
+            f_val.del(pos_right.first);
             f_val.update(v_left, pos_left);
             return {true, pos_right.second};
           }
@@ -353,7 +351,7 @@ public:
               i_left.val[i_left.cnt - 1] = r.val[pos_right.second - 1];
               i_left.cnt += i_right.cnt;
             }
-            f_index.Delete(pos_right.first);
+            f_index.del(pos_right.first);
             f_index.update(i_left, pos_left);
             return {true, pos_right.second};
           }
