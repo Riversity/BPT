@@ -191,13 +191,7 @@ public:
       k = 0;
     }
     while(block.val[k].first == key) {
-      while(block.siz == 0) {
-        pos = block.nxt_pos;
-        if(pos == -1) return ret;
-        f_val.read(block, pos);
-        k = 0;
-      }
-      ret.push_back(block.val[k].second);
+      if(block.siz != 0) ret.push_back(block.val[k].second);
       if(k >= block.siz - 1) { // end of the block
         pos = block.nxt_pos;
         if(pos == -1) return ret;
@@ -329,7 +323,7 @@ public:
             for(int i = 0; i < v_right.siz; ++i) {
               v_left.val[v_left.siz + i] = v_right.val[i];
             }
-            v_left.siz = v_left.siz + v_right.siz;
+            v_left.siz += v_right.siz;
             v_left.nxt_pos = v_right.nxt_pos;
             f_val.Delete(pos_right.first);
             f_val.update(v_left, pos_left);
@@ -355,7 +349,7 @@ public:
     if(root == -1) return;
     erase_at(dat, root);
   }
-  /*
+  
   void put(int pos) {
     val_node s;
     f_val.read(s, pos);
@@ -402,7 +396,7 @@ public:
       std::cout<<i<<std::endl;
     }
   }
-  */
+  
 };
 
 }
