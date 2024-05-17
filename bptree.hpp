@@ -302,7 +302,7 @@ public:
     }
   }
   std::pair<bool, int> erase_at(const Pair& dat, int index_pos) {
-  // std::pair<bool, int> erase_at(const Pair& dat, int index_pos, Pair& new_pivot) {
+    // std::pair<bool, int> erase_at(const Pair& dat, int index_pos, Pair& new_pivot) {
     // first return value whether erased, second the pos of the deleted node
     // void erase_at(const Pair& dat, int index_pos) { // no merge
     index_node r;
@@ -315,21 +315,21 @@ public:
       f_val.read(v_right, pos_right.first);
       if(v_right.erase(dat)) {
         --total;
-        val_node v_left;
-        if(pos_left != -1 && v_right.siz < M/2) {
+        if(pos_left != -1) {
+          val_node v_left;
           f_val.read(v_left, pos_left);
-          if(v_left.siz + v_right.siz <= M) { // merge
+          if(v_left.siz + v_right.siz <= L) { // merge
             for(int i = 0; i < v_right.siz; ++i) {
               v_left.val[v_left.siz + i] = v_right.val[i];
             }
             v_left.siz += v_right.siz;
             v_left.nxt_pos = v_right.nxt_pos;
-            f_val.Delete(pos_right.first);
+            //f_val.Delete(pos_right.first);
             f_val.update(v_left, pos_left);
             return {true, pos_right.second};
           }
         }
-      f_val.update(v_right, pos_right.first);
+        f_val.update(v_right, pos_right.first);
       }
       return {false, -1};
     }
@@ -339,10 +339,25 @@ public:
         index_node i_right;
         f_index.read(i_right, pos_right.first);
         i_right.delete_by_pos(ret.second);
-        //int pos_left = -1;
-        //index_node i_left;
-
         f_index.update(i_right, pos_right.first);
+        if(pos_left != -1) {
+          index_node i_left;
+          f_index.read(i_left, pos_left);
+          if(i_left.cnt + i_right.cnt < M) {
+            if(i_right.cnt > 0) {
+              for(int i = 0; i < i_right.cnt - 1; ++i) {
+                i_left.pos_index_node[i_left.cnt + i] = i_right.pos_index_node[i];
+                i_left.val[i_left.cnt + i] = i_right.val[i];
+              }
+              i_left.pos_index_node[i_left.cnt + i_right.cnt - 1] = i_right.pos_index_node[i_right.cnt - 1];
+              i_left.val[i_left.cnt - 1] = r.val[pos_right.second - 1];
+              i_left.cnt += i_right.cnt;
+            }
+            //f_index.Delete(pos_right.first);
+            f_index.update(i_left, pos_left);
+            return {true, pos_right.second};
+          }
+        }
       }
       return {false, -1};
     }
@@ -351,7 +366,6 @@ public:
     if(root == -1) return;
     erase_at(dat, root);
   }
-  /*
   void put(int pos) {
     val_node s;
     f_val.read(s, pos);
@@ -398,7 +412,6 @@ public:
       std::cout<<i<<std::endl;
     }
   }
-  */
 };
 
 }
