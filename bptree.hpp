@@ -80,6 +80,13 @@ private:
       pos_index_node[k + 1] = pos;
       ++cnt;
     }
+    void delete_by_pos(int k) {
+      for(int i = k; i < cnt - 1; ++i) {
+        pos_index_node[i] = pos_index_node[i + 1];
+        val[i - 1] = val[i];
+      }
+      --cnt;
+    }
   };
   struct val_node { // leaf node
     Pair val[L + 1];
@@ -184,7 +191,13 @@ public:
       k = 0;
     }
     while(block.val[k].first == key) {
-      if(block.siz != 0) ret.push_back(block.val[k].second);
+      while(block.siz == 0) {
+        pos = block.nxt_pos;
+        if(pos == -1) return ret;
+        f_val.read(block, pos);
+        k = 0;
+      }
+      ret.push_back(block.val[k].second);
       if(k >= block.siz - 1) { // end of the block
         pos = block.nxt_pos;
         if(pos == -1) return ret;
@@ -295,25 +308,47 @@ public:
       insert_at(dat, root, ret);
     }
   }
-  //std::pair<bool, int> erase_at(const Pair& dat, int index_pos, Pair& new_pivot) {
+  std::pair<bool, int> erase_at(const Pair& dat, int index_pos) {
+  // std::pair<bool, int> erase_at(const Pair& dat, int index_pos, Pair& new_pivot) {
     // first return value whether erased, second the pos of the deleted node
-  void erase_at(const Pair& dat, int index_pos) { // no merge
+    // void erase_at(const Pair& dat, int index_pos) { // no merge
     index_node r;
     f_index.read(r, index_pos);
-    std::pair<int, int> pos = r.higher_bound_pair(dat);
+    std::pair<int, int> pos_right = r.higher_bound_pair(dat);
+    int pos_left = -1;
+    if(pos_right.second > 0) pos_left = r.pos_index_node[pos_right.second - 1];
     if(r.isLeaf) {
-      val_node v;
-      f_val.read(v, pos.first);
-      if(v.erase(dat)) {
-        f_val.update(v, pos.first);
+      val_node v_right;
+      f_val.read(v_right, pos_right.first);
+      if(v_right.erase(dat)) {
         --total;
-        /*if(v.siz < M/2) {
-
-        }*/
+        val_node v_left;
+        if(pos_left != -1 && v_right.siz < M/2) {
+          f_val.read(v_left, pos_left);
+          if(v_left.siz + v_right.siz <= M) { // merge
+            for(int i = 0; i < v_right.siz; ++i) {
+              v_left.val[v_left.siz + i] = v_right.val[i];
+            }
+            v_left.siz = v_left.siz + v_right.siz;
+            v_left.nxt_pos = v_right.nxt_pos;
+            f_val.Delete(pos_right.first);
+            f_val.update(v_left, pos_left);
+            return {true, pos_right.second};
+          }
+        }
+      f_val.update(v_right, pos_right.first);
       }
+      return {false, -1};
     }
     else {
-      erase_at(dat, pos.first);
+      std::pair<bool, int> ret = erase_at(dat, pos_right.first);
+      if(ret.first) { // youmo
+        index_node i_right;
+        f_index.read(i_right, pos_right.first);
+        i_right.delete_by_pos(ret.second);
+        f_index.update(i_right, pos_right.first);
+      }
+      return {false, -1};
     }
   }
   void erase(const Pair& dat) {
