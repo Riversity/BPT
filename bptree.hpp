@@ -315,7 +315,6 @@ public:
       f_val.read(v_right, pos_right.first);
       if(v_right.erase(dat)) {
         --total;
-        f_val.update(v_right, pos_right.first);
         if(pos_left != -1) {
           val_node v_left;
           f_val.read(v_left, pos_left);
@@ -325,11 +324,12 @@ public:
             }
             v_left.siz += v_right.siz;
             v_left.nxt_pos = v_right.nxt_pos;
-            //f_val.Delete(pos_right.first);
+            f_val.Delete(pos_right.first);
             f_val.update(v_left, pos_left);
             return {true, pos_right.second};
           }
         }
+        f_val.update(v_right, pos_right.first);
       }
       return {false, -1};
     }
@@ -339,7 +339,6 @@ public:
         index_node i_right;
         f_index.read(i_right, pos_right.first);
         i_right.delete_by_pos(ret.second);
-        f_index.update(i_right, pos_right.first);
         if(pos_left != -1) {
           index_node i_left;
           f_index.read(i_left, pos_left);
@@ -353,18 +352,25 @@ public:
               i_left.val[i_left.cnt - 1] = r.val[pos_right.second - 1];
               i_left.cnt += i_right.cnt;
             }
-            //f_index.Delete(pos_right.first);
+            f_index.Delete(pos_right.first);
             f_index.update(i_left, pos_left);
             return {true, pos_right.second};
           }
         }
+        f_index.update(i_right, pos_right.first);
       }
       return {false, -1};
     }
   }
   void erase(const Pair& dat) {
     if(root == -1) return;
-    erase_at(dat, root);
+    std::pair<bool, int> ret = erase_at(dat, root);
+    if(ret.first) {
+      index_node i_right;
+      f_index.read(i_right, root);
+      i_right.delete_by_pos(ret.second);
+      f_index.update(i_right, root);
+    }
   }
   void put(int pos) {
     val_node s;
