@@ -315,6 +315,7 @@ public:
       f_val.read(v_right, pos_right.first);
       if(v_right.erase(dat)) {
         --total;
+        f_val.update(v_right, pos_right.first);
         if(pos_left != -1) {
           val_node v_left;
           f_val.read(v_left, pos_left);
@@ -329,7 +330,6 @@ public:
             return {true, pos_right.second};
           }
         }
-        f_val.update(v_right, pos_right.first);
       }
       return {false, -1};
     }
