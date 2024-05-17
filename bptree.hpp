@@ -189,19 +189,12 @@ public:
       f_val.read(block, pos);
       k = 0;
     }
-    while(block.siz == 0) {
-      pos = block.nxt_pos;
-      if(pos == -1) return ret;
-      f_val.read(block, pos);
-    }
     while(block.val[k].first == key) {
-      ret.push_back(block.val[k].second);
+      if(block.siz != 0) ret.push_back(block.val[k].second);
       if(k >= block.siz - 1) { // end of the block
-        do {
-          pos = block.nxt_pos;
-          if(pos == -1) return ret;
-          f_val.read(block, pos);
-        } while(block.siz == 0);
+        pos = block.nxt_pos;
+        if(pos == -1) return ret;
+        f_val.read(block, pos);
         k = 0;
       }
       else {
