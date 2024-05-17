@@ -343,7 +343,7 @@ public:
         if(pos_left != -1) {
           index_node i_left;
           f_index.read(i_left, pos_left);
-          if(i_left.cnt + i_right.cnt < M) {
+          if(i_left.cnt + i_right.cnt <= M) {
             if(i_right.cnt > 0) {
               for(int i = 0; i < i_right.cnt - 1; ++i) {
                 i_left.pos_index_node[i_left.cnt + i] = i_right.pos_index_node[i];
